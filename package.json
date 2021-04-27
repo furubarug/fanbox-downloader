@@ -1,0 +1,26 @@
+{
+  "name": "fanbox-downloader",
+  "version": "0.1.1",
+  "description": "pixiv FANBOXの投稿を一括ダウンロード → 投稿毎にフォルダ分けして保存する",
+  "main": "fanbox-downloader.ts",
+  "directories": {
+    "doc": "docs"
+  },
+  "dependencies": {
+    "typescript": "^4.2.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "tsc": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/furubarug/fanbox-downloader.git"
+  },
+  "author": "furubarug",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/furubarug/fanbox-downloader/issues"
+  },
+  "homepage": "https://github.com/furubarug/fanbox-downloader#readme"
+}

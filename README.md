@@ -1,5 +1,5 @@
 # fanbox-downloader
-pixiv FANBOXの投稿を自動でダウンロードする
+pixiv FANBOXの投稿を一括ダウンロード → 投稿毎にフォルダ分けして保存する
 
 自分用、性欲駆動開発
 
@@ -13,7 +13,7 @@ pixiv FANBOXの投稿を自動でダウンロードする
 ### 既知の問題
 - type: textに対応してない
 - 画像とファイルだけじゃなくて文章も保存したいね
-- 画像以外でファイル名の規則が適用されない（たぶんレスポンスヘッダ側のファイル名を優先しちゃってる）
+- ~~画像以外でファイル名の規則が適用されない~~
 
 ### fork後の変更点
 - 対応するURLを少し増やした
@@ -23,5 +23,5 @@ pixiv FANBOXの投稿を自動でダウンロードする
 
 ↓ブックマークレット
 ```
-javascript:import("https://furubarug.github.io/fanbox-downloader/fanbox-downloader.min.js").then(m=>m.main());
+javascript:import("https://furubarug.github.io/fanbox-downloader/fanbox-downloader.min.js").then(m=>m.fanboxDownloader());
 ```
