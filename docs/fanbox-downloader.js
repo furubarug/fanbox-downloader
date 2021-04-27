@@ -28,15 +28,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
 })(function (require, exports) {
     "use strict";
     var __syncRequire = typeof module === "object" && typeof module.exports === "object";
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.fanboxDownloader = void 0;
     let dlList = { items: {}, postCount: 0, fileCount: 0, id: 'undefined' };
     let limit = 0;
     let isIgnoreFree = false;
-    // 投稿の情報を個別に取得しない（基本true）
     let isEco = true;
-    // メイン
-    async function fanboxDownloader() {
+    window.fanboxDownloader = async function () {
         if (window.location.origin === "https://downloads.fanbox.cc") {
             document.body.innerHTML = "";
             let tb = document.createElement("input");
@@ -86,16 +82,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
         console.log(json);
         await navigator.clipboard.writeText(json);
         alert("jsonをコピーしました。downloads.fanbox.ccで実行して貼り付けてね");
-    }
-    exports.fanboxDownloader = fanboxDownloader;
-    // 投稿リストURLからURLリストに追加
+    };
     function addByPostListUrl(url, eco) {
         const postList = JSON.parse(fetchUrl(url));
         const items = postList.body.items;
         console.log("投稿の数:" + items.length);
         for (let i = 0; i < items.length && limit !== 0; i++) {
             dlList.postCount++;
-            // ecoがtrueならpostInfoを個別に取得しない
             if (eco) {
                 console.log(items[i]);
                 addByPostInfo(items[i]);
@@ -106,7 +99,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
         }
         return postList.body.nextUrl;
     }
-    // HTTP GETするおまじない
     function fetchUrl(url) {
         const request = new XMLHttpRequest();
         request.open('GET', url, false);
@@ -114,7 +106,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
         request.send(null);
         return request.responseText;
     }
-    // 投稿IDからitemsを得る
     async function getItemsById(postId) {
         dlList.items = {};
         isIgnoreFree = confirm("無料コンテンツを省く？");
@@ -129,11 +120,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
             }, 100);
         }
     }
-    // 投稿IDからpostInfoを得る
     function getPostInfoById(postId) {
         return JSON.parse(fetchUrl(`https://api.fanbox.cc/post.info?postId=${postId}`)).body;
     }
-    // postInfoオブジェクトからURLリストに追加する
     function addByPostInfo(postInfo) {
         const title = postInfo.title;
         const date = postInfo.publishedDatetime;
@@ -174,7 +163,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
         if (limit != null)
             limit--;
     }
-    // URLリストに追加
     function addUrl(title, url, fileName) {
         const dl = { url, fileName };
         dlList.fileCount++;
@@ -182,12 +170,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
             dlList.items[title] = [];
         dlList.items[title].push(dl);
     }
-    // ZIPでダウンロード
     async function downloadZip(json) {
-        // @ts-ignore
         await (__syncRequire ? Promise.resolve().then(() => __importStar(require("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"))) : new Promise((resolve_1, reject_1) => { require(["https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"], resolve_1, reject_1); }).then(__importStar));
         dlList = JSON.parse(json);
-        // @ts-ignore
         let zip = new JSZip();
         let root = zip.folder(dlList.id);
         let count = 0;

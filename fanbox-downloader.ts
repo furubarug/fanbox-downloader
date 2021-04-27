@@ -7,7 +7,7 @@ let isIgnoreFree = false;
 let isEco = true;
 
 // メイン
-export async function fanboxDownloader() {
+(window as any).fanboxDownloader = async function () {
     if (window.location.origin === "https://downloads.fanbox.cc") {
         document.body.innerHTML = "";
         let tb = document.createElement("input");
@@ -50,7 +50,7 @@ export async function fanboxDownloader() {
     console.log(json);
     await navigator.clipboard.writeText(json);
     alert("jsonをコピーしました。downloads.fanbox.ccで実行して貼り付けてね");
-}
+};
 
 // 投稿リストURLからURLリストに追加
 function addByPostListUrl(url: string, eco: boolean) {
@@ -185,4 +185,3 @@ async function downloadZip(json: string) {
     a.remove();
     await setTimeout(() => window.URL.revokeObjectURL(url), 100);
 }
-
