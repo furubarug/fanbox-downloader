@@ -1,11 +1,13 @@
-let dlList = {items: {}, postCount: 0, fileCount: 0, id: 'undefined'};
-let limit = 0;
+let dlList: { items: { [p: string]: { url: string; fileName: string }[] }; postCount: number; fileCount: number; id: string } =
+    {items: {}, postCount: 0, fileCount: 0, id: 'undefined'};
+let limit: number | null = 0;
 let isIgnoreFree = false;
 
 // 投稿の情報を個別に取得しない（基本true）
 let isEco = true;
 
-export async function main() {
+// メイン
+export async function fanboxDownloader() {
     if (window.location.origin === "https://downloads.fanbox.cc") {
         document.body.innerHTML = "";
         let tb = document.createElement("input");
@@ -21,21 +23,25 @@ export async function main() {
         };
         return;
     } else if (window.location.origin === "https://www.fanbox.cc") {
-        const userId = window.location.href.match(/fanbox.cc\/@(.*)/)[1];
-        if (userId == null) {
+        const userIdReg = window.location.href.match(/fanbox.cc\/@(.*)/);
+        if (userIdReg == null || !userIdReg[1]) {
             alert("しらないURL");
             return;
         }
-        dlList.id = userId;
-        const postId = window.location.href.match(/fanbox.cc\/@.*\/posts\/(\d*)/);
-        if (postId) addByPostInfo(getPostInfoById(postId[1]));
-        else await getItemsById(userId);
+        dlList.id = userIdReg[1];
+        const postIdReg = window.location.href.match(/fanbox.cc\/@.*\/posts\/(\d*)/);
+        if (postIdReg && postIdReg[1]) addByPostInfo(getPostInfoById(postIdReg[1]));
+        else await getItemsById(userIdReg[1]);
     } else if (window.location.href.match(/^https:\/\/(.*)\.fanbox\.cc\//)) {
-        const userId = window.location.href.match(/^https:\/\/(.*)\.fanbox\.cc\//)[1];
-        const postId = window.location.href.match(/.*\.fanbox\.cc\/posts\/(\d*)/);
-        dlList.id = userId;
-        if (postId) addByPostInfo(getPostInfoById(postId[1]));
-        else await getItemsById(userId);
+        const userIdReg = window.location.href.match(/^https:\/\/(.*)\.fanbox\.cc\//);
+        const postIdReg = window.location.href.match(/.*\.fanbox\.cc\/posts\/(\d*)/);
+        if (userIdReg == null || !userIdReg[1]) {
+            alert("しらないURL");
+            return;
+        }
+        dlList.id = userIdReg[1];
+        if (postIdReg && postIdReg[1]) addByPostInfo(getPostInfoById(postIdReg[1]));
+        else await getItemsById(userIdReg[1]);
     } else {
         alert(`ここどこですか(${window.location.href})`);
         return;
@@ -47,7 +53,7 @@ export async function main() {
 }
 
 // 投稿リストURLからURLリストに追加
-function addByPostListUrl(url, eco) {
+function addByPostListUrl(url: string, eco: boolean) {
     const postList = JSON.parse(fetchUrl(url));
     const items = postList.body.items;
 
@@ -55,7 +61,7 @@ function addByPostListUrl(url, eco) {
     for (let i = 0; i < items.length && limit !== 0; i++) {
         dlList.postCount++;
         // ecoがtrueならpostInfoを個別に取得しない
-        if (eco === true) {
+        if (eco) {
             console.log(items[i]);
             addByPostInfo(items[i]);
         } else {
@@ -66,7 +72,7 @@ function addByPostListUrl(url, eco) {
 }
 
 // HTTP GETするおまじない
-function fetchUrl(url) {
+function fetchUrl(url: string): string {
     const request = new XMLHttpRequest();
     request.open('GET', url, false);
     request.withCredentials = true;
@@ -75,11 +81,11 @@ function fetchUrl(url) {
 }
 
 // 投稿IDからitemsを得る
-async function getItemsById(postId) {
+async function getItemsById(postId: string) {
     dlList.items = {};
     isIgnoreFree = confirm("無料コンテンツを省く？");
-
-    limit = prompt("取得制限数を入力 キャンセルで全て取得");
+    const res = prompt("取得制限数を入力 キャンセルで全て取得");
+    limit = res ? parseInt(res) ?? null : null;
     let count = 1, nextUrl;
     nextUrl = `https://api.fanbox.cc/post.listCreator?creatorId=${postId}&limit=100`;
     for (; nextUrl != null; count++) {
@@ -91,12 +97,12 @@ async function getItemsById(postId) {
 }
 
 // 投稿IDからpostInfoを得る
-function getPostInfoById(postId) {
+function getPostInfoById(postId: string) {
     return JSON.parse(fetchUrl(`https://api.fanbox.cc/post.info?postId=${postId}`)).body;
 }
 
 // postInfoオブジェクトからURLリストに追加する
-function addByPostInfo(postInfo) {
+function addByPostInfo(postInfo: any) {
     const title = postInfo.title;
     const date = postInfo.publishedDatetime;
     if (isIgnoreFree && (postInfo.feeRequired === 0)) {
@@ -137,17 +143,19 @@ function addByPostInfo(postInfo) {
 }
 
 // URLリストに追加
-function addUrl(title, url, filename) {
-    const dl = {url: url, filename: filename};
+function addUrl(title: string, url: string, fileName: string) {
+    const dl = {url, fileName};
     dlList.fileCount++;
     if (!dlList.items[title]) dlList.items[title] = [];
     dlList.items[title].push(dl);
 }
 
 // ZIPでダウンロード
-async function downloadZip(json) {
+async function downloadZip(json: string) {
+    // @ts-ignore
     await import("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js");
     dlList = JSON.parse(json);
+    // @ts-ignore
     let zip = new JSZip();
     let root = zip.folder(dlList.id);
     let count = 0;
@@ -156,10 +164,10 @@ async function downloadZip(json) {
         let folder = root.folder(title);
         let i = 1, l = items.length;
         for (const dl of items) {
-            console.log(`download ${dl.filename} (${i++}/${l})`)
+            console.log(`download ${dl.fileName} (${i++}/${l})`)
             const response = await fetch(dl.url);
             const blob = await response.blob();
-            folder.file(dl.filename, blob)
+            folder.file(dl.fileName, blob)
             await setTimeout(() => {
             }, 100);
         }
