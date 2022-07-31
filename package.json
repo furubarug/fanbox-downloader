@@ -1,6 +1,6 @@
 {
   "name": "fanbox-downloader",
-  "version": "3.4.5",
+  "version": "3.4.6",
   "description": "pixiv FANBOXの投稿を投稿毎にフォルダ分け → ZIPとして一括ダウンロードするブックマークレット",
   "scripts": {
     "build": "webpack",
@@ -30,7 +30,7 @@
     "webpack-cli": "^4.7.2"
   },
   "dependencies": {
-    "download-helper": "github:furubarug/download-helper#release/3.1.3"
+    "download-helper": "github:furubarug/download-helper#release/3.1.5"
   },
   "eslintConfig": {
     "root": true,
