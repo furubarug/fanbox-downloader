@@ -14,7 +14,7 @@
   "bugs": {
     "url": "https://github.com/furubarug/fanbox-downloader/issues"
   },
-  "homepage": "https://furubarug.github.io/fanbox-downloader/",
+  "homepage": "https://novel0917.github.io/fanbox-downloader/",
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.10.2",
     "@typescript-eslint/parser": "^5.10.2",

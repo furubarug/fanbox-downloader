@@ -3,12 +3,14 @@ pixiv FANBOXの投稿を投稿毎にフォルダ分け → ZIPとして一括ダ
 
 自分用、性欲駆動開発
 
+※親元のブランチの更新が途絶えているため個人的に利用するために作成。Claude等で保守する想定のため確度は不明
+
 ### 使い方
-- https://furubarug.github.io/fanbox-downloader/
+- https://novel0917.github.io/fanbox-downloader/
 
 ↓ブックマークレット
 ```
-javascript:import("https://furubarug.github.io/fanbox-downloader/fanbox-downloader.min.js").then(m=>m.main()).catch(e=>alert(`エラー出た(${e})`));
+javascript:import("https://novel0917.github.io/fanbox-downloader/fanbox-downloader.min.js").then(m=>m.main()).catch(e=>alert(`エラー出た(${e})`));
 ```
 
 ### 既知の問題
